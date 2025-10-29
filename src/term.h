@@ -11,6 +11,9 @@ namespace term{
     void write(wchar_t ch);
     void write(const wchar_t* str);
 
+    void flush_in();
+    void flush_out();
+
     //set cursor status
     void set_fg_color(RGB c);
     void set_bg_color(RGB c);

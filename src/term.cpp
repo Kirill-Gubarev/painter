@@ -15,7 +15,7 @@ Point term::get_size(){
 Point term::get_position(){
     static thread_local char buf[128];
     term::write(L"\033[6n");
-    std::fflush(STDIN_FILENO);
+    term::flush_in();
 
     size_t i = 0;
     char ch;
@@ -38,6 +38,12 @@ void term::write(wchar_t ch){
 }
 void term::write(const wchar_t* str){
     wprintf(L"%ls", str);
+}
+void term::flush_in(){
+    std::fflush(stdin);
+}
+void term::flush_out(){
+    std::fflush(stdout);
 }
 
 void term::set_fg_color(RGB c){

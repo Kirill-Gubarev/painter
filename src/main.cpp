@@ -16,11 +16,11 @@ int main(){
 
     Point start(10, 10);
     Point end(20, 20);
+    int step = 1;
 
     for(char ch; (ch = term::get_char());){
         if(ch == 'q')
             break;
-        render::clear();
         for(int x = start.x; x <= end.x; x++)
             render::set_pixel(Point(x, end.y), true, RGB(0, 0, 255));
         for(int y = start.y; y <= end.y; y++)
@@ -30,10 +30,10 @@ int main(){
         for(int y = start.y; y <= end.y; y++)
             render::set_pixel(Point(start.x, y), true, RGB(255, 0, 0));
         render::update();
-        start.x++;
-        start.y++;
-        end.x++;
-        end.y++;
+        start.x += step;
+        start.y += step;
+        end.x += step;
+        end.y += step;
     }
     render::cleanup();
 

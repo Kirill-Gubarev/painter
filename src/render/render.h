@@ -7,7 +7,10 @@ namespace render{
     void setup();
     void cleanup();
     void update();
-    void clear();
+    void clear_screen();
+
+    void set_global_fg(const RGB& color);
+    void set_global_bg(const RGB& color);
 
     void set_cell(const Point& p,
             wchar_t glyph = L' ',

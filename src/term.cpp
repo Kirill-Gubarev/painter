@@ -33,8 +33,8 @@ char term::get_char(){
     return getchar();
 }
 
-void term::write(wchar_t ch){
-    wprintf(L"%lc", ch);
+void term::write(wchar_t glyph){
+    wprintf(L"%lc", glyph);
 }
 void term::write(const wchar_t* str){
     wprintf(L"%ls", str);
@@ -52,8 +52,11 @@ void term::set_fg_color(RGB c){
 void term::set_bg_color(RGB c){
     wprintf(L"\033[48;2;%u;%u;%um", c.r, c.g, c.b);
 }
+void term::set_position(int x, int y){
+    wprintf(L"\033[%d;%dH", y + 1, x + 1);
+}
 void term::set_position(Point p){
-    wprintf(L"\033[%d;%dH", p.y + 1, p.x + 1);
+    term::set_position(p.x, p.y);
 }
 
 void term::set_alt_buf(bool enable){

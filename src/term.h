@@ -8,7 +8,7 @@ namespace term{
     Point get_position();
     char get_char();
 
-    void write(wchar_t ch);
+    void write(wchar_t glyph);
     void write(const wchar_t* str);
 
     void flush_in();
@@ -17,6 +17,7 @@ namespace term{
     //set cursor status
     void set_fg_color(RGB c);
     void set_bg_color(RGB c);
+    void set_position(int x, int y);
     void set_position(Point p);
 
     //set terminal mode

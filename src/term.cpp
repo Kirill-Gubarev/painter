@@ -1,5 +1,6 @@
 #include "term.h"
 
+#include <cwchar>
 #include <cstdio>
 #include <clocale>
 #include <sys/ioctl.h>

@@ -2,7 +2,7 @@
 
 #include "core/rgb.h"
 
-namespace render{
+namespace render::detail{
     struct Cell{
         wchar_t glyph;
         RGB fg, bg;

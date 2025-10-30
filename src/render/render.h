@@ -4,10 +4,27 @@
 #include "core/rgb.h"
 
 namespace render{
-    void setup();
-    void cleanup();
+    namespace detail{
+        struct Cell;
+        void resize(Point new_size);
+
+        // optimizes terminal output
+        void set_brush_fg(const RGB& color);
+        // optimizes terminal output
+        void set_brush_bg(const RGB& color);
+
+        Cell& get_cell(int x, int y);
+        // write a space with the global background color
+        void clear_screen_cell(int x, int y);
+        // write spaces with the global background color
+        void clear_screen();
+    }
+
+    void init();
+    void terminate();
     void update();
-    void clear_screen();
+
+    Point get_size();
 
     void set_global_fg(const RGB& color);
     void set_global_bg(const RGB& color);

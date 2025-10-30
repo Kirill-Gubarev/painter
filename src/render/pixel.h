@@ -2,7 +2,7 @@
 
 #include "core/rgb.h"
 
-namespace render{
+namespace render::detail{
     struct Pixel{
         bool filled;
         RGB color;

@@ -1,10 +1,13 @@
-#include "term.h"
 #include "render/render.h"
 #include <csignal>
 #include <unistd.h>
 
+#include <cstdlib>
+#include <chrono>
+#include <thread>
+
 void signal_handler(int signal) {
-    render::cleanup();
+    render::terminate();
     exit(1);
 }
 
@@ -12,30 +15,39 @@ int main(){
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 
-    render::setup();
+    render::init();
 
-    Point start(10, 10);
-    Point end(20, 20);
+    Point start(0, 0);
+    Point rect_size(10, 10);
     int step = 1;
+    Point direction(1, 1);
+    Point screen_size = render::get_size();
+    screen_size.y *= 2;
 
-    for(char ch; (ch = term::get_char());){
-        if(ch == 'q')
-            break;
-        for(int x = start.x; x <= end.x; x++)
-            render::set_pixel(Point(x, end.y), true, RGB(0, 0, 255));
-        for(int y = start.y; y <= end.y; y++)
-            render::set_pixel(Point(end.x, y), true, RGB(0, 255, 0));
-        for(int x = start.x; x <= end.x; x++)
+    for(;;){
+        for(int x = start.x; x <= start.x + rect_size.x; x++)
+            render::set_pixel(Point(x, start.y + rect_size.y), true, RGB(0, 0, 255));
+        for(int y = start.y; y <= start.y + rect_size.y; y++)
+            render::set_pixel(Point(start.x + rect_size.x, y), true, RGB(0, 255, 0));
+        for(int x = start.x; x <= start.x + rect_size.x; x++)
             render::set_pixel(Point(x, start.y), true, RGB(255, 255, 0));
-        for(int y = start.y; y <= end.y; y++)
+        for(int y = start.y; y <= start.y + rect_size.y; y++)
             render::set_pixel(Point(start.x, y), true, RGB(255, 0, 0));
+
+        if(start.y + rect_size.y >= screen_size.y - 1)
+            direction = Point(direction.x, -1);
+        if(start.x + rect_size.x >= screen_size.x - 1)
+            direction = Point(-1, direction.y);
+        if(start.y <= 0)
+            direction = Point(direction.x, 1);
+        if(start.x <= 0)
+            direction = Point(1, direction.y);
+
         render::update();
-        start.x += step;
-        start.y += step;
-        end.x += step;
-        end.y += step;
+        start = start + direction;
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
-    render::cleanup();
+    render::terminate();
 
     return 0;
 }

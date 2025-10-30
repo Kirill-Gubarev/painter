@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 struct Point{
     int x, y;
     Point();
@@ -12,3 +10,9 @@ struct Point{
 
 bool operator==(const Point& p1, const Point& p2);
 bool operator!=(const Point& p1, const Point& p2);
+
+Point operator+(const Point& p1, const Point& p2);
+Point operator-(const Point& p1, const Point& p2);
+Point operator*(const Point& p1, const Point& p2);
+Point operator/(const Point& p1, const Point& p2);
+Point operator%(const Point& p1, const Point& p2);

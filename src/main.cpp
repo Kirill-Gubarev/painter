@@ -21,10 +21,10 @@ int main(){
     Point rect_size(10, 10);
     int step = 1;
     Point direction(1, 1);
-    Point screen_size = render::get_size();
-    screen_size.y *= 2;
 
     for(;;){
+        Point screen_size = render::get_size();
+        screen_size.y *= 2;
         for(int x = start.x; x <= start.x + rect_size.x; x++)
             render::set_pixel(Point(x, start.y + rect_size.y), true, RGB(0, 0, 255));
         for(int y = start.y; y <= start.y + rect_size.y; y++)

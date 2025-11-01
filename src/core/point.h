@@ -3,16 +3,45 @@
 struct Point{
     int x, y;
     Point();
+    Point(int value);
     Point(int x, int y);
 
     int area();
+
+    bool operator==(const Point& other) const;
+    bool operator!=(const Point& other) const;
+    bool operator<(const Point& other) const;
+    bool operator>(const Point& other) const;
+    bool operator<=(const Point& other) const;
+    bool operator>=(const Point& other) const;
+
+    Point operator+() const;
+    Point operator-() const;
+
+    Point operator+(const Point& other) const;
+    Point operator-(const Point& other) const;
+    Point operator*(const Point& other) const;
+    Point operator/(const Point& other) const;
+    Point operator%(const Point& other) const;
+
+    Point& operator+=(const Point& other);
+    Point& operator-=(const Point& other);
+    Point& operator*=(const Point& other);
+    Point& operator/=(const Point& other);
+    Point& operator%=(const Point& other);
+
+    Point& operator++();
+    Point operator++(int);
+    Point& operator--();
+    Point operator--(int);
 };
 
-bool operator==(const Point& p1, const Point& p2);
-bool operator!=(const Point& p1, const Point& p2);
+Point operator+(const Point& p, int value);
+Point operator-(const Point& p, int value);
+Point operator*(const Point& p, int value);
+Point operator/(const Point& p, int value);
+Point operator%(const Point& p, int value);
 
-Point operator+(const Point& p1, const Point& p2);
-Point operator-(const Point& p1, const Point& p2);
-Point operator*(const Point& p1, const Point& p2);
-Point operator/(const Point& p1, const Point& p2);
-Point operator%(const Point& p1, const Point& p2);
+Point operator+(int value, const Point& p);
+Point operator-(int value, const Point& p);
+Point operator*(int value, const Point& p);

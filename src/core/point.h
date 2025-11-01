@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 struct Point{
     int x, y;
     Point();
@@ -45,3 +47,5 @@ Point operator%(const Point& p, int value);
 Point operator+(int value, const Point& p);
 Point operator-(int value, const Point& p);
 Point operator*(int value, const Point& p);
+
+std::string to_string(const Point& p);

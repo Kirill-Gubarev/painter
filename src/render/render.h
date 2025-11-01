@@ -2,6 +2,7 @@
 
 #include "core/point.h"
 #include "core/rgb.h"
+#include "string"
 
 namespace render{
     namespace detail{
@@ -14,10 +15,6 @@ namespace render{
         void set_brush_bg(const RGB& color);
 
         Cell& get_cell(int x, int y);
-        // write a space with the global background color
-        void clear_screen_cell(int x, int y);
-        // write spaces with the global background color
-        void clear_screen();
     }
 
     void init();
@@ -25,15 +22,26 @@ namespace render{
     void update();
 
     Point get_size();
+    const RGB& get_global_fg();
+    const RGB& get_global_bg();
+
+    // write spaces with the global background color
+    void clear_screen();
+    // write a space with the global background color
+    void clear_screen_cell(int x, int y);
 
     void set_global_fg(const RGB& color);
     void set_global_bg(const RGB& color);
 
     void set_cell(const Point& p,
             wchar_t glyph = L' ',
-            const RGB& fg = RGB(255, 255, 255),
-            const RGB& bg = RGB(0, 0, 0));
+            const RGB& fg = get_global_fg(),
+            const RGB& bg = get_global_bg());
     void set_pixel(const Point& p,
-            bool filled = true,
-            const RGB& color = RGB(255, 255, 255));
+            bool filled,
+            const RGB& color);
+    void set_text(const Point& p,
+            const std::string& text,
+            const RGB& fg = get_global_fg(),
+            const RGB& bg = get_global_bg());
 }

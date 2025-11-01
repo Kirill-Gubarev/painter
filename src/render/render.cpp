@@ -52,26 +52,6 @@ render::detail::Cell& render::detail::get_cell(int x, int y){
     return cell_buf[x + y * screen_size.x];
 }
 
-void render::detail::clear_screen(){
-    // preparation terminal settings
-    term::set_fg_color(global_fg);
-    term::set_bg_color(global_bg);
-    term::return_cursor();
-
-    // clearing screen
-    term::clear();
-
-    // reset terminal settings
-    term::set_fg_color(brush_fg);
-    term::set_bg_color(brush_bg);
-}
-
-void render::detail::clear_screen_cell(int x, int y){
-    set_brush_bg(global_bg);
-    term::set_position(x, y);
-    term::write(L' ');
-}
-
 void render::init(){
     term::set_locale();
     term::set_alt_buf(true);
@@ -162,6 +142,34 @@ Point render::get_size(){
     return term::get_size();
 }
 
+void render::clear_screen(){
+    // preparation terminal settings
+    term::set_fg_color(global_fg);
+    term::set_bg_color(global_bg);
+    term::return_cursor();
+
+    // clearing screen
+    term::clear();
+
+    // reset terminal settings
+    term::set_fg_color(brush_fg);
+    term::set_bg_color(brush_bg);
+}
+
+void render::clear_screen_cell(int x, int y){
+    set_brush_bg(global_bg);
+    term::set_position(x, y);
+    term::write(L' ');
+}
+
+const RGB& render::get_global_fg(){
+    return global_fg;
+}
+
+const RGB& render::get_global_bg(){
+    return global_bg;
+}
+
 void render::set_global_fg(const RGB& color){
     global_fg = color;
 }
@@ -170,15 +178,32 @@ void render::set_global_bg(const RGB& color){
     global_bg = color;
 }
 
-void render::set_cell(const Point& p, wchar_t glyph, const RGB& fg, const RGB& bg){
+void render::set_cell(const Point& p, wchar_t glyph, const RGB& fg, const RGB& bg) {
     if(p.x < 0 || p.x >= screen_size.x || p.y < 0 || p.y >= screen_size.y)
         return;
     // 2 is the count of pending cell updates
     cell_buf[p.x + p.y * screen_size.x] = Cell(glyph, fg, bg, 2);
 }
 
-void render::set_pixel(const Point& p, bool filled, const RGB& color){
+void render::set_pixel(const Point& p, bool filled, const RGB& color) {
     if(p.x < 0 || p.x >= screen_size.x || p.y < 0 || p.y >= screen_size.y * 2)
         return;
     pixel_buf[p.x + p.y * screen_size.x] = Pixel(filled, color, true);
+}
+
+void render::set_text(const Point& p, const std::string& text, const RGB& fg,
+        const RGB& bg){
+    size_t buf_length = screen_size.area();
+    size_t text_length = text.length();
+
+    size_t start = p.x + p.y * screen_size.x;
+    if(start >= buf_length)
+        return;
+
+    size_t end = start + text_length;
+    if(end > buf_length)
+        text_length -= end - buf_length;
+
+    for(size_t i = 0; i < text_length; i++)
+        cell_buf[start + i] = Cell(text[i], fg, bg, 2);
 }

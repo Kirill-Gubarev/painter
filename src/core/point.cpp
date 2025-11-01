@@ -129,3 +129,7 @@ Point operator-(int value, const Point& p){
 Point operator*(int value, const Point& p){
 	return Point(value * p.x, value * p.y);
 }
+
+std::string to_string(const Point& p){
+    return "(" + std::to_string(p.x) + ";" + std::to_string(p.y) + ")";
+}

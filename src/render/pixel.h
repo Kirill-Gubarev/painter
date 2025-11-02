@@ -5,11 +5,11 @@
 namespace render::detail{
     struct Pixel{
         bool filled;
-        RGB color;
+        core::RGB color;
         bool changed;
 
         Pixel(bool filled = false,
-                const RGB& color = RGB(255, 255, 255),
+                const core::RGB& color = core::RGB(255, 255, 255),
                 bool changed = false);
     };
     bool operator==(const Pixel& p1, const Pixel& p2);

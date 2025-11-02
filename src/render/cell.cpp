@@ -1,6 +1,6 @@
 #include "cell.h"
 
-render::detail::Cell::Cell(wchar_t glyph, const RGB& fg, const RGB& bg, uint8_t updates_left):
+render::detail::Cell::Cell(wchar_t glyph, const core::RGB& fg, const core::RGB& bg, uint8_t updates_left):
     glyph(glyph),
     fg(fg),
     bg(bg),

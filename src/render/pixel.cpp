@@ -1,6 +1,6 @@
 #include "pixel.h"
 
-render::detail::Pixel::Pixel(bool filled, const RGB& color, bool changed):
+render::detail::Pixel::Pixel(bool filled, const core::RGB& color, bool changed):
     filled(filled),
     color(color),
     changed(changed)

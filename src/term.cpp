@@ -7,13 +7,13 @@
 #include <unistd.h>
 #include <termios.h>
 
-Point term::get_size(){
+core::Point term::get_size(){
     winsize w;
     if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
         return {};
     return {w.ws_col, w.ws_row};
 }
-Point term::get_position(){
+core::Point term::get_position(){
     static thread_local char buf[128];
     term::write(L"\033[6n");
     term::flush_in();
@@ -25,7 +25,7 @@ Point term::get_position(){
     }
     buf[i] = '\0';
 
-    Point pos;
+    core::Point pos;
     if (sscanf(buf, "\033[%d;%d", &pos.y, &pos.x) == 2)
         return pos;
     return {};
@@ -47,16 +47,16 @@ void term::flush_out(){
     std::fflush(stdout);
 }
 
-void term::set_fg_color(RGB c){
+void term::set_fg_color(core::RGB c){
     wprintf(L"\033[38;2;%u;%u;%um", c.r, c.g, c.b);
 }
-void term::set_bg_color(RGB c){
+void term::set_bg_color(core::RGB c){
     wprintf(L"\033[48;2;%u;%u;%um", c.r, c.g, c.b);
 }
 void term::set_position(int x, int y){
     wprintf(L"\033[%d;%dH", y + 1, x + 1);
 }
-void term::set_position(Point p){
+void term::set_position(core::Point p){
     term::set_position(p.x, p.y);
 }
 

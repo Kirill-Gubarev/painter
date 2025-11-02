@@ -9,34 +9,34 @@
 namespace render{
     using namespace detail;
     namespace detail{
-        static Point screen_size; // terminal size
+        static core::Point screen_size; // terminal size
         static Cell* cell_buf = nullptr; // cell buffer
         // pixel_buf is 2 times bigger because it uses semi-block symbols
         // {L' ',L'▀',L'▄',L'█'}
         static Pixel* pixel_buf = nullptr; // pixel buffer
 
-        static RGB global_fg(255, 255, 255); // global foreground color
-        static RGB global_bg(0, 0, 0); // global background color
-        static RGB brush_fg = global_fg; // current terminal foreground color
-        static RGB brush_bg = global_bg; // current terminal background color
+        static core::RGB global_fg(255, 255, 255); // global foreground color
+        static core::RGB global_bg(0, 0, 0); // global background color
+        static core::RGB brush_fg = global_fg; // current terminal foreground color
+        static core::RGB brush_bg = global_bg; // current terminal background color
     }
 }
 
-void render::detail::set_brush_fg(const RGB& color){
+void render::detail::set_brush_fg(const core::RGB& color){
     if(brush_fg == color)
         return;
     brush_fg = color;
     term::set_fg_color(color);
 }
 
-void render::detail::set_brush_bg(const RGB& color){
+void render::detail::set_brush_bg(const core::RGB& color){
     if(brush_bg == color)
         return;
     brush_bg = color;
     term::set_bg_color(color);
 }
 
-void render::detail::resize(Point new_size){
+void render::detail::resize(core::Point new_size){
     screen_size = new_size;
 
     if(cell_buf)
@@ -78,7 +78,7 @@ void render::terminate(){
 }
 
 void render::update() {
-    Point new_size = term::get_size();
+    core::Point new_size = term::get_size();
     if(new_size != screen_size)
         resize(new_size);
 
@@ -95,19 +95,19 @@ void render::update() {
             if(pix1.changed && pix1.filled){
                 if(pix2.changed && pix2.filled){
                     if(pix1.color == pix2.color)
-                        set_cell(Point(x, y), L'█', pix1.color, global_bg);
+                        set_cell(core::Point(x, y), L'█', pix1.color, global_bg);
                     else
-                        set_cell(Point(x, y), L'▀', pix1.color, pix2.color);
+                        set_cell(core::Point(x, y), L'▀', pix1.color, pix2.color);
                 }
                 else{
-                    set_cell(Point(x, y), L'▀', pix1.color, global_bg);
+                    set_cell(core::Point(x, y), L'▀', pix1.color, global_bg);
                 }
             }
             else if(pix2.changed && pix2.filled){
-                set_cell(Point(x, y), L'▄', pix2.color, global_bg);
+                set_cell(core::Point(x, y), L'▄', pix2.color, global_bg);
             }
             else{
-                set_cell(Point(x, y), L' ', global_bg);
+                set_cell(core::Point(x, y), L' ', global_bg);
             }
             pix1.changed = false;
             pix2.changed = false;
@@ -138,7 +138,7 @@ void render::update() {
     }
 }
 
-Point render::get_size(){
+core::Point render::get_size(){
     return term::get_size();
 }
 
@@ -162,37 +162,40 @@ void render::clear_screen_cell(int x, int y){
     term::write(L' ');
 }
 
-const RGB& render::get_global_fg(){
+const core::RGB& render::get_global_fg(){
     return global_fg;
 }
 
-const RGB& render::get_global_bg(){
+const core::RGB& render::get_global_bg(){
     return global_bg;
 }
 
-void render::set_global_fg(const RGB& color){
+void render::set_global_fg(const core::RGB& color){
     global_fg = color;
 }
 
-void render::set_global_bg(const RGB& color){
+void render::set_global_bg(const core::RGB& color){
     global_bg = color;
 }
 
-void render::set_cell(const Point& p, wchar_t glyph, const RGB& fg, const RGB& bg) {
+void render::set_cell(const core::Point& p, wchar_t glyph,
+        const core::RGB& fg, const core::RGB& bg)
+{
     if(p.x < 0 || p.x >= screen_size.x || p.y < 0 || p.y >= screen_size.y)
         return;
     // 2 is the count of pending cell updates
     cell_buf[p.x + p.y * screen_size.x] = Cell(glyph, fg, bg, 2);
 }
 
-void render::set_pixel(const Point& p, bool filled, const RGB& color) {
+void render::set_pixel(const core::Point& p, bool filled, const core::RGB& color) {
     if(p.x < 0 || p.x >= screen_size.x || p.y < 0 || p.y >= screen_size.y * 2)
         return;
     pixel_buf[p.x + p.y * screen_size.x] = Pixel(filled, color, true);
 }
 
-void render::set_text(const Point& p, const std::string& text, const RGB& fg,
-        const RGB& bg){
+void render::set_text(const core::Point& p, const std::string& text,
+        const core::RGB& fg, const core::RGB& bg)
+{
     size_t buf_length = screen_size.area();
     size_t text_length = text.length();
 

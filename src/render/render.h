@@ -7,12 +7,12 @@
 namespace render{
     namespace detail{
         struct Cell;
-        void resize(Point new_size);
+        void resize(core::Point new_size);
 
         // optimizes terminal output
-        void set_brush_fg(const RGB& color);
+        void set_brush_fg(const core::RGB& color);
         // optimizes terminal output
-        void set_brush_bg(const RGB& color);
+        void set_brush_bg(const core::RGB& color);
 
         Cell& get_cell(int x, int y);
     }
@@ -21,27 +21,27 @@ namespace render{
     void terminate();
     void update();
 
-    Point get_size();
-    const RGB& get_global_fg();
-    const RGB& get_global_bg();
+    core::Point get_size();
+    const core::RGB& get_global_fg();
+    const core::RGB& get_global_bg();
 
     // write spaces with the global background color
     void clear_screen();
     // write a space with the global background color
     void clear_screen_cell(int x, int y);
 
-    void set_global_fg(const RGB& color);
-    void set_global_bg(const RGB& color);
+    void set_global_fg(const core::RGB& color);
+    void set_global_bg(const core::RGB& color);
 
-    void set_cell(const Point& p,
+    void set_cell(const core::Point& p,
             wchar_t glyph = L' ',
-            const RGB& fg = get_global_fg(),
-            const RGB& bg = get_global_bg());
-    void set_pixel(const Point& p,
+            const core::RGB& fg = get_global_fg(),
+            const core::RGB& bg = get_global_bg());
+    void set_pixel(const core::Point& p,
             bool filled,
-            const RGB& color);
-    void set_text(const Point& p,
+            const core::RGB& color);
+    void set_text(const core::Point& p,
             const std::string& text,
-            const RGB& fg = get_global_fg(),
-            const RGB& bg = get_global_bg());
+            const core::RGB& fg = get_global_fg(),
+            const core::RGB& bg = get_global_bg());
 }

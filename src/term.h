@@ -4,8 +4,8 @@
 #include "core/rgb.h"
 
 namespace term{
-    Point get_size();
-    Point get_position();
+    core::Point get_size();
+    core::Point get_position();
     char get_char();
 
     void write(wchar_t glyph);
@@ -15,10 +15,10 @@ namespace term{
     void flush_out();
 
     //set cursor status
-    void set_fg_color(RGB c);
-    void set_bg_color(RGB c);
+    void set_fg_color(core::RGB c);
+    void set_bg_color(core::RGB c);
     void set_position(int x, int y);
-    void set_position(Point p);
+    void set_position(core::Point p);
 
     //set terminal mode
     void set_alt_buf(bool enable);

@@ -6,7 +6,7 @@ namespace core {
     struct RGB{
         uint8_t r, g, b;
         RGB();
-        RGB(uint8_t value);
+        explicit RGB(uint8_t value);
         RGB(uint8_t r, uint8_t g, uint8_t b);
 
         bool operator==(const RGB& other) const;

@@ -6,7 +6,7 @@ namespace core {
     struct Point{
         int x, y;
         Point();
-        Point(int value);
+        explicit Point(int value);
         Point(int x, int y);
 
         int area();

@@ -2,46 +2,51 @@
 
 #include "core/point.h"
 #include "core/rgb.h"
-#include "string"
+
+#include <string>
 
 namespace render{
+    using core::Point;
+    using core::RGB;
+
     namespace detail{
         struct Cell;
-        void resize(core::Point new_size);
+        void resize(Point size);
 
         // optimizes terminal output
-        void set_brush_fg(const core::RGB& color);
+        void set_brush_fg(const RGB& color);
         // optimizes terminal output
-        void set_brush_bg(const core::RGB& color);
+        void set_brush_bg(const RGB& color);
 
-        Cell& get_cell(int x, int y);
+        Cell& get_cell(const Point& p);
     }
 
     void init();
     void terminate();
     void update();
 
-    core::Point get_size();
-    const core::RGB& get_global_fg();
-    const core::RGB& get_global_bg();
+    Point get_screen_size();
+    Point get_canvas_size();
+    const RGB& get_default_fg();
+    const RGB& get_default_bg();
+    int get_count_updates();
 
-    // write spaces with the global background color
-    void clear_screen();
-    // write a space with the global background color
-    void clear_screen_cell(int x, int y);
+    // write spaces with the default background color
+    void clear_screen(const RGB& color = get_default_bg());
+    // write a space with the default background color
+    void clear_screen_cell(const Point& p, const RGB& color = get_default_bg());
 
-    void set_global_fg(const core::RGB& color);
-    void set_global_bg(const core::RGB& color);
+    void set_default_fg(const RGB& color);
+    void set_default_bg(const RGB& color);
 
-    void set_cell(const core::Point& p,
+    void set_cell(const Point& p,
             wchar_t glyph = L' ',
-            const core::RGB& fg = get_global_fg(),
-            const core::RGB& bg = get_global_bg());
-    void set_pixel(const core::Point& p,
-            bool filled,
-            const core::RGB& color);
-    void set_text(const core::Point& p,
+            const RGB& fg = get_default_fg(),
+            const RGB& bg = get_default_bg());
+    void set_pixel(const Point& p,
+            const RGB& color = get_default_fg());
+    void set_text(const Point& p,
             const std::string& text,
-            const core::RGB& fg = get_global_fg(),
-            const core::RGB& bg = get_global_bg());
+            const RGB& fg = get_default_fg(),
+            const RGB& bg = get_default_bg());
 }

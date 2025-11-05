@@ -1,10 +1,11 @@
 #include "cell.h"
 
-render::detail::Cell::Cell(wchar_t glyph, const core::RGB& fg, const core::RGB& bg, uint8_t updates_left):
+render::detail::Cell::Cell(wchar_t glyph, const core::RGB& fg,
+        const core::RGB& bg, Update_state update):
     glyph(glyph),
     fg(fg),
     bg(bg),
-    updates_left(updates_left)
+    update(update)
 {}
 bool render::detail::operator==(const Cell& c1, const Cell& c2){
     return c1.glyph == c2.glyph && c1.fg == c2.fg && c1.bg == c2.bg;

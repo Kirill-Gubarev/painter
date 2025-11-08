@@ -7,31 +7,28 @@
 #include <unistd.h>
 #include <termios.h>
 
+namespace term{
+    static struct{
+        core::RGB default_fg = core::RGB(255);
+        core::RGB default_bg = core::RGB(0);
+    } state;
+}
+
+char term::get_char(){
+    return getchar();
+}
+
 core::Point term::get_size(){
     winsize w;
     if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
         return {};
-    return {w.ws_col, w.ws_row};
+    return core::Point(w.ws_col, w.ws_row);
 }
-core::Point term::get_position(){
-    static thread_local char buf[128];
-    term::write(L"\033[6n");
-    term::flush_in();
-
-    size_t i = 0;
-    char ch;
-    while(read(STDIN_FILENO, &ch, 1) == 1 && ch != 'R') {
-        buf[i++] = ch;
-    }
-    buf[i] = '\0';
-
-    core::Point pos;
-    if (sscanf(buf, "\033[%d;%d", &pos.y, &pos.x) == 2)
-        return pos;
-    return {};
+core::RGB term::get_default_fg(){
+    return state.default_fg;
 }
-char term::get_char(){
-    return getchar();
+core::RGB term::get_default_bg(){
+    return state.default_bg;
 }
 
 void term::write(wchar_t glyph){
@@ -40,24 +37,15 @@ void term::write(wchar_t glyph){
 void term::write(const wchar_t* str){
     wprintf(L"%ls", str);
 }
-void term::flush_in(){
-    std::fflush(stdin);
-}
-void term::flush_out(){
-    std::fflush(stdout);
-}
 
-void term::set_fg_color(core::RGB c){
+void term::set_fg_color(const core::RGB& c){
     wprintf(L"\033[38;2;%u;%u;%um", c.r, c.g, c.b);
 }
-void term::set_bg_color(core::RGB c){
+void term::set_bg_color(const core::RGB& c){
     wprintf(L"\033[48;2;%u;%u;%um", c.r, c.g, c.b);
 }
-void term::set_position(int x, int y){
-    wprintf(L"\033[%d;%dH", y + 1, x + 1);
-}
-void term::set_position(core::Point p){
-    term::set_position(p.x, p.y);
+void term::set_position(const core::Point& new_pos){
+    wprintf(L"\033[%d;%dH", new_pos.y + 1, new_pos.x + 1);
 }
 
 void term::set_alt_buf(bool enable){
@@ -94,12 +82,11 @@ void term::set_locale(){
     std::setlocale(LC_ALL,"");
 }
 
-void term::return_cursor(){
-    term::write(L"\033[H");
-}
 void term::reset_color(){
-    term::write(L"\033[0m");
+    wprintf(L"\033[0m");
 }
 void term::clear(){
+    term::set_fg_color(state.default_fg);
+    term::set_bg_color(state.default_bg);
     term::write(L"\033[2J");
 }

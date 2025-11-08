@@ -17,28 +17,8 @@ namespace render{
         // Pixel_buf is 2 times bigger because it uses semi-block symbols
         // {L' ', L'▀', L'▄', L'█'}
         static std::vector<Pixel> pixel_buf;
-
-        static RGB default_fg(255, 255, 255); // default foreground color
-        static RGB default_bg(0, 0, 0); // default background color
-        static RGB brush_fg = default_fg; // current terminal foreground color
-        static RGB brush_bg = default_bg; // current terminal background color
-
-        static int count_updates = 0;
+        static Stats stats;
     }
-}
-
-void render::detail::set_brush_fg(const RGB& color){
-    if(brush_fg == color)
-        return;
-    brush_fg = color;
-    term::set_fg_color(color);
-}
-
-void render::detail::set_brush_bg(const RGB& color){
-    if(brush_bg == color)
-        return;
-    brush_bg = color;
-    term::set_bg_color(color);
 }
 
 void render::detail::resize(Point new_size){
@@ -59,12 +39,9 @@ void render::init(){
     term::set_echo_mode(false);
     term::set_canonical_mode(false);
 
-    term::set_fg_color(default_fg);
-    term::set_bg_color(default_bg);
-
     screen_size = render::get_screen_size();
     resize(screen_size);
-    clear_screen();
+    clear();
 }
 
 void render::terminate(){
@@ -80,8 +57,10 @@ void render::terminate(){
 
 void render::update() {
     core::Point new_size = term::get_size();
-    if(new_size != screen_size)
+    if(new_size != screen_size){
         resize(new_size);
+        clear();
+    }
 
     // 1) pixels updating
     for(Point p(0, 0); p.y < screen_size.y; p.y++){
@@ -96,41 +75,42 @@ void render::update() {
             if(pix1.update == Update_state::Update){
                 if(pix2.update == Update_state::Update){
                     if(pix1.color == pix2.color)
-                        set_cell(p, L'█', pix1.color, default_bg);
+                        set_cell(p, L'█', pix1.color, get_default_bg());
                     else
                         set_cell(p, L'▀', pix1.color, pix2.color);
                 }
                 else{
-                    set_cell(p, L'▀', pix1.color, default_bg);
+                    set_cell(p, L'▀', pix1.color, get_default_bg());
                 }
             }
             else if(pix2.update == Update_state::Update){
-                set_cell(p, L'▄', pix2.color, default_bg);
-            }
-            else{
-                set_cell(p, L' ', default_bg);
+                set_cell(p, L'▄', pix2.color, get_default_bg());
             }
             pix1.update = Update_state::None;
             pix2.update = Update_state::None;
         }
     }
 
-    count_updates = 0;
+    stats.clear_count = 0;
+    stats.update_count = 0;
     // 2) cells updating
     for(Point p(0, 0); p.y < screen_size.y; p.y++){
         for(p.x = 0; p.x < screen_size.x; p.x++){
             Cell& cell = get_cell(p);
             if(cell.update == Update_state::Update){
-                set_brush_fg(cell.fg);
-                set_brush_bg(cell.bg);
+                term::set_fg_color(cell.fg);
+                term::set_bg_color(cell.bg);
                 term::set_position(p);
                 term::write(cell.glyph);
                 cell.update = Update_state::Clear;
-                count_updates++;
+                stats.update_count++;
             }
             else if(cell.update == Update_state::Clear){
-                clear_screen_cell(p);
+                term::set_bg_color(get_default_bg());
+                term::set_position(p);
+                term::write(L' ');
                 cell.update = Update_state::None;
+                stats.clear_count++;
                 continue;
             }
         }
@@ -145,34 +125,23 @@ core::Point render::get_canvas_size(){
     return Point(p.x, p.y * 2);
 }
 
-void render::clear_screen(const RGB& color){
-    set_brush_bg(color);
+void render::clear(){
     term::clear();
 }
 
 void render::clear_screen_cell(const Point& p, const RGB& color){
-    set_brush_bg(color);
-    term::set_position(p.x, p.y);
-    term::write(L' ');
 }
 
-const core::RGB& render::get_default_fg(){
-    return default_fg;
+core::RGB render::get_default_fg(){
+    return term::get_default_fg();
 }
 
-const core::RGB& render::get_default_bg(){
-    return default_bg;
-}
-int render::get_count_updates(){
-    return count_updates;
+core::RGB render::get_default_bg(){
+   return term::get_default_bg();
 }
 
-void render::set_default_fg(const RGB& color){
-    default_fg = color;
-}
-
-void render::set_default_bg(const RGB& color){
-    default_bg = color;
+render::Stats render::get_stats(){
+    return stats;
 }
 
 void render::set_cell(const Point& p, wchar_t glyph,
